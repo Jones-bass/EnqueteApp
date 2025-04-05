@@ -1,26 +1,32 @@
-import { Poll } from '@prisma/client';
-import { PollRepository } from '../repositories/pollRepository';
+import { Poll } from '@prisma/client'
+import { PollRepository } from '../repositories/pollRepository'
+import { PollAlreadyExistsError } from '../errors/poll-already-exists-error'
 
-interface PollUseCaseRequest {
-  title: string;
+export interface CreatePollRequest {
+  title: string
+  options: string[]
 }
 
-interface PollUseCaseResponse {
-  poll: Poll;
+export interface CreatePollResponse {
+  poll: Poll
 }
 
 export class PollUseCase {
-  constructor(private patientRepository: PollRepository) { }
+  constructor(private pollRepository: PollRepository) {}
 
-  async execute({
-    title,
-  }: PollUseCaseRequest): Promise<PollUseCaseResponse> {
+  async execute({ title, options }: CreatePollRequest): Promise<CreatePollResponse> {
+    const patientWithSameEmail =
+    await this.pollRepository.findByTitle(title)
 
-  
-    const poll = await this.patientRepository.create({
+  if (patientWithSameEmail) {
+    throw new PollAlreadyExistsError()
+  }
+
+  const poll = await this.pollRepository.create({
       title,
-    });
+      options
+    })
 
-    return { poll };
+    return { poll }
   }
 }

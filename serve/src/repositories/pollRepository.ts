@@ -1,5 +1,11 @@
 import { Prisma, Poll } from '@prisma/client'
 
+export interface CreatePollData {
+  title: string
+  options: string[] | Prisma.OptionsCreateInput[]
+}
+
 export interface PollRepository {
-  create(data: Prisma.PollCreateInput): Promise<Poll>
+  findByTitle(title: string): Promise<Poll | null>
+  create(data: CreatePollData): Promise<Poll>
 }
