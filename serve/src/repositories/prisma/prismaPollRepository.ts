@@ -34,4 +34,18 @@ export class PrismaPollRepository implements PollRepository {
 
     return poolTitle
   }
+
+  async findAllPoll(): Promise<Poll[]> {
+    const pollList = await prisma.poll.findMany()
+    return pollList
+  }
+
+  async findPollById(pollId: string): Promise<Poll | null> {
+    return await prisma.poll.findUnique({
+      where: { id: pollId },
+      include: {
+        options: true 
+      }
+    })
+  }
 }
