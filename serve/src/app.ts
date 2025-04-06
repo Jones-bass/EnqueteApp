@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import fastifyCors from "@fastify/cors";
+import fastifyCookie from "@fastify/cookie";
 
 import { env } from './env'
 
@@ -11,6 +12,11 @@ export const app = fastify()
 app.register(fastifyCors, {
   origin: '*',
 })
+
+app.register(fastifyCookie, {
+  secret: "polls-app-nlw",
+  hook: 'onRequest',
+});
 
 app.register(eventRoutes)
 
